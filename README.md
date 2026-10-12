@@ -9,6 +9,7 @@ A small, predictable web app for testing the platform. Built with
 | ---------- | ------------------------------------------------------------------ |
 | `/`        | Landing page: a hero section with a call-to-action button.         |
 | `/counter` | Counter page. Not built yet, so Next.js shows its not-found page.  |
+| `/connect-four` | Connect Four (4-in-line) against the computer. Player moves first. |
 
 ## Prerequisites
 
@@ -54,7 +55,14 @@ All three must finish with zero errors.
 
 ```
 src/app/
-  layout.tsx    # root layout and site metadata
-  page.tsx      # landing page (/)
-  globals.css   # Tailwind import and theme tokens
+  layout.tsx              # root layout and site metadata
+  page.tsx                # landing page (/)
+  globals.css             # Tailwind import and theme tokens
+  connect-four/
+    page.tsx              # /connect-four route (metadata + renders the game)
+    ConnectFour.tsx       # client component: board, turn handling, status
+src/components/
+  button-styles.ts        # shared Tailwind button classes
+src/lib/
+  connect-four.ts         # pure game rules: drops, win/draw detection, computer move
 ```

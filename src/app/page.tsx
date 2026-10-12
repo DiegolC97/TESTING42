@@ -1,4 +1,8 @@
 import Link from "next/link";
+import {
+  primaryButtonClass,
+  secondaryButtonClass,
+} from "@/components/button-styles";
 
 export default function Home() {
   return (
@@ -10,12 +14,14 @@ export default function Home() {
         <p className="max-w-prose text-lg text-zinc-600 sm:text-xl dark:text-zinc-400">
           A small, predictable web app for testing the platform.
         </p>
-        <Link
-          href="/counter"
-          className="inline-flex h-12 items-center justify-center rounded-full bg-foreground px-8 text-base font-medium text-background transition-colors hover:bg-zinc-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground dark:hover:bg-zinc-300"
-        >
-          Go to the counter
-        </Link>
+        <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:gap-4">
+          <Link href="/counter" className={primaryButtonClass}>
+            Go to the counter
+          </Link>
+          <Link href="/connect-four" className={secondaryButtonClass}>
+            Play Connect Four
+          </Link>
+        </div>
       </section>
     </main>
   );

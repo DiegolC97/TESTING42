@@ -31,3 +31,23 @@ A choice made and the reasoning behind it — the path taken over the alternativ
 **Where:** `src/app/page.tsx` (`<Link href="/counter">`).
 
 **Learned:** 2026-10-12, landing page Work Order.
+
+## Computer move is delayed 400 ms and guarded against double moves
+
+**What:** In `ConnectFour.tsx` a `useEffect` schedules the computer's move with `setTimeout(…, 400)` whenever it is the computer's turn and the game is still running. The cleanup clears the timer, and the state updater only applies the move when `current.board === board` (the board the move was computed for).
+
+**Why:** The Work Order requires a visible "computer's turn" during which player clicks are ignored, and that the computer never moves twice. The delay makes the turn visible; the board identity check plus cleanup makes a double move impossible even under React Strict Mode's double effect invocation or a "New game" click mid-think.
+
+**Where:** `src/app/connect-four/ConnectFour.tsx` (`COMPUTER_DELAY_MS`).
+
+**Learned:** 2026-10-12, Connect Four Work Order.
+
+## Computer randomness is injectable
+
+**What:** `chooseComputerColumn(board, random = Math.random)` takes the random source as a parameter.
+
+**Why:** Rules 3 and 4 (random centre / random valid column) can then be checked deterministically by passing a fixed function, which is how the rule order was verified.
+
+**Where:** `src/lib/connect-four.ts`.
+
+**Learned:** 2026-10-12, Connect Four Work Order.

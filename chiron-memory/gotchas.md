@@ -31,3 +31,13 @@ A non-obvious pitfall or trap, learned the hard way.
 **Where:** `package-lock.json`.
 
 **Learned:** 2026-10-12, landing page Work Order.
+
+## Playwright waits on `aria-disabled="true"` instead of clicking
+
+**What:** Playwright's `page.click` / `locator.click` treats `aria-disabled="true"` as "not enabled" and silently waits (up to the timeout) for the element to become enabled before dispatching the click.
+
+**Why:** The board columns carry `aria-disabled` while it is the computer's turn, when they are full and after the game ends. Tests that want to prove such clicks are *ignored* must bypass actionability, e.g. `page.evaluate(() => el.click())` or `click({ force: true })`; otherwise the click lands after the state changes and looks like a bug in the page.
+
+**Where:** `src/app/connect-four/ConnectFour.tsx` (column buttons); any Playwright driving of `/connect-four`.
+
+**Learned:** 2026-10-12, Connect Four Work Order.
