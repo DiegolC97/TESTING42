@@ -51,3 +51,23 @@ A choice made and the reasoning behind it — the path taken over the alternativ
 **Where:** `src/lib/connect-four.ts`.
 
 **Learned:** 2026-10-12, Connect Four Work Order.
+
+## Hard Connect Four opponent: alpha-beta search in a Web Worker with a safety-belt win/block check
+
+**What:** `chooseHardColumn` (`src/lib/connect-four-hard.ts`) first applies the explicit win-now / block-now rules via `findWinningColumn`, then runs negamax + alpha-beta with iterative deepening under a 700 ms budget (`DEFAULT_TIME_BUDGET_MS`), returning the move from the last fully completed depth. The page runs it in a Web Worker (`src/lib/connect-four-hard.worker.ts`, created with `new Worker(new URL("../../lib/connect-four-hard.worker.ts", import.meta.url))`) and starts the search as soon as it is the computer's turn, applying the reply only after the 400 ms visible delay has also passed. Replies carry a request id and are applied only if `current.board` is still the board they were computed for.
+
+**Why:** The Work Order demands Hard never misses an immediate win or block (the explicit pre-check makes that provable regardless of search depth), answers within about 1 s, and keeps the page responsive. Searching on the main thread would block it for up to the whole budget; in the worker the main thread's longest stall measured 21 ms. Easy/Medium stay synchronous inside the existing `setTimeout`. If `Worker` is undefined, Hard falls back to a synchronous 300 ms search.
+
+**Where:** `src/lib/connect-four-hard.ts`, `src/lib/connect-four-hard.worker.ts`, `src/app/connect-four/ConnectFour.tsx`.
+
+**Learned:** 2026-11-18, difficulty levels Work Order.
+
+## Connect Four settings live in React state only; opening the setup step clears the board
+
+**What:** `ConnectFour.tsx` keeps `settings` (the match in progress) separate from `draft` (what the setup step shows); `draft` is copied into `settings` only on "Start game". Opening the setup step (Restart confirmation, or "New game" after a result) discards the game and renders an empty, inert board. Nothing is written to storage, so a reload always shows Medium / Player first.
+
+**Why:** The Work Order requires defaults on every page load, the last-used settings preselected after a game, and "Cancel" on the restart prompt to leave the match untouched. Keeping the draft separate makes Cancel trivially safe.
+
+**Where:** `src/app/connect-four/ConnectFour.tsx` (`DEFAULT_SETTINGS`, `openSetup`, `startGame`).
+
+**Learned:** 2026-11-18, difficulty levels Work Order.

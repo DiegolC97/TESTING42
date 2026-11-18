@@ -41,3 +41,23 @@ A non-obvious pitfall or trap, learned the hard way.
 **Where:** `src/app/connect-four/ConnectFour.tsx` (column buttons); any Playwright driving of `/connect-four`.
 
 **Learned:** 2026-10-12, Connect Four Work Order.
+
+## Drive the dev server through `localhost`, not `127.0.0.1`
+
+**What:** With `next dev`, loading the page via `http://127.0.0.1:<port>` renders the HTML but React never hydrates: Next blocks the dev resources as cross-origin (the server log says "Blocked cross-origin request to Next.js dev resource", the browser shows HMR WebSocket errors) and every click is silently ignored. Use `http://localhost:<port>` (or add `allowedDevOrigins` in `next.config.ts`).
+
+**Why:** Browser automation against the dev server looks like a broken page (buttons do nothing) when it is only the origin.
+
+**Where:** Any Playwright / browser run against `npm run dev`.
+
+**Learned:** 2026-11-18, difficulty levels Work Order.
+
+## Running `src/lib` modules with bare `node` has two constraints
+
+**What:** Node 24's type stripping rejects TypeScript parameter properties (`constructor(private x: T)`), and ESM resolution needs an explicit `.ts` extension on relative imports. The lib modules use plain fields instead of parameter properties, and because the Next/TS config uses extensionless imports, a cross-module hand-check script must first copy the files to a scratch directory and rewrite `from "./x"` to `from "./x.ts"` (one `sed`).
+
+**Why:** Keeps the "rules can be checked with bare `node`" convention working now that `connect-four-hard.ts` imports `connect-four.ts`.
+
+**Where:** `src/lib/connect-four.ts`, `src/lib/connect-four-hard.ts`.
+
+**Learned:** 2026-11-18, difficulty levels Work Order.
