@@ -16,6 +16,18 @@ export const WIN_LENGTH = 4;
 export const CENTER_COLUMNS = [2, 3, 4] as const;
 
 export type Piece = "player" | "computer";
+
+export type Difficulty = "easy" | "medium" | "hard";
+export const DIFFICULTIES: readonly Difficulty[] = ["easy", "medium", "hard"];
+export const DIFFICULTY_LABEL: Record<Difficulty, string> = {
+  easy: "Easy",
+  medium: "Medium",
+  hard: "Hard",
+};
+
+export function otherPiece(piece: Piece): Piece {
+  return piece === "player" ? "computer" : "player";
+}
 export type Cell = Piece | null;
 export type Board = readonly (readonly Cell[])[];
 
@@ -122,8 +134,18 @@ function pickRandom(columns: readonly number[], random: () => number): number {
   return columns[Math.min(index, columns.length - 1)];
 }
 
+/** Easy: a random non-full column, with no strategy at all. -1 when full. */
+export function chooseEasyColumn(
+  board: Board,
+  random: () => number = Math.random,
+): number {
+  const playable = getPlayableColumns(board);
+  if (playable.length === 0) return -1;
+  return pickRandom(playable, random);
+}
+
 /**
- * The computer's move, following the Work Order's rule order:
+ * Medium: the computer's move, following the first Work Order's rule order:
  *  1. win in one move if possible;
  *  2. otherwise block the player's immediate win;
  *  3. otherwise a random non-full centre column (3–5 in 1-based numbering);
@@ -148,3 +170,6 @@ export function chooseComputerColumn(
 
   return pickRandom(playable, random);
 }
+
+/** Alias so call sites can name the difficulty they mean. */
+export const chooseMediumColumn = chooseComputerColumn;
